@@ -47,7 +47,7 @@ public class GmailSignInTest{
     @After
     public  void closeBrowser(){
         // changes
-        // close window
+
         dr.close();
     }
  }
