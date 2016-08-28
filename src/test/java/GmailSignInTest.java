@@ -68,18 +68,30 @@ public class GmailSignInTest{
         WebElement emailAddress = By.name("to").findElement(dr);
 
         emailAddress.sendKeys("nazymhealthywater@gmail.com");
+        String subject = "New message for you";
 
         WebElement subjectLine = By.name("subjectbox").findElement(dr);
-        subjectLine.sendKeys("New message for you");
+        subjectLine.sendKeys(subject);
 
+        String bodyMessage = "Today is good time to code app";
         WebElement emailBody = By.xpath("//div[@aria-label='Message Body']").findElement(dr);
-        emailBody.sendKeys("Today is good time to code app");
+        emailBody.sendKeys(emailBody);
 
         WebElement sendButton = By.xpath("//div[starts-with(@aria-label,'Send')]").findElement(dr);
-
         sendButton.click();
 
+        wd.until(ExpectedConditions.visibilityOfElementLocated(By.linkText("Inbox (1)")));
+        WebElement inboxLinkage = By.linkText("Inbox (1)").findElement(dr);
+        inboxLinkage.click();
 
+        WebElement newEmail = By.cssSelector().findElement(dr);
+        newEmail.click();
+
+        WebElement subjectArea = By.cssSelector().findElement(dr);
+        Assert.assertEquals("Email subject text should be the same", subject, subjectArea.getText());
+
+        WebElement bodyArea = By.cssSelector().findElement(dr);
+        Assert.assertEquals("Email subject text should be the same", emailBody, subjectArea.getText());
 
 
 
