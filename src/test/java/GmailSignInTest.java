@@ -15,9 +15,12 @@ import static org.junit.Assert.*;
  */
 public class GmailSignInTest{
     WebDriver dr = new FirefoxDriver();
+    WebDriverWait wd = new WebDriverWait(dr, 30);
+
+
     @Test
     public void gmailLoginShouldBeSuccessful(){
-        WebDriverWait wd = new WebDriverWait(dr, 30);
+
 // SignIn
         dr.get("http://gmail.com/");
         System.out.println(dr.getTitle());
@@ -44,10 +47,48 @@ public class GmailSignInTest{
         wd.until(ExpectedConditions.visibilityOfElementLocated(By.id("signIn")));
         Assert.assertTrue("signIn button should exist", dr.findElements(By.id("signIn")).size()>0);
     }
-    @After
-    public  void closeBrowser(){
-        // changes
+    @Test
+    public void gmailSendAndReseiveEmailTest(){
+        dr.get("http://gmail.com/");
+        System.out.println(dr.getTitle());
+        dr.findElement(By.xpath("//input[@id='Email']")).sendKeys("nazymhealthywater");
+        dr.findElement(By.id("next")).click();
 
-        dr.close();
+
+        wd.until(ExpectedConditions.elementToBeClickable(By.id("Passwd")));
+        // Thread.sleep(1000);
+        dr.findElement(By.id("Passwd")).sendKeys("Arlen@470317");
+        dr.findElement(By.id("signIn")).click();
+        wd.until(ExpectedConditions.visibilityOfElementLocated(By.partialLinkText("Inbox")));
+        Assert.assertTrue("Inbox should exist", dr.findElements(By.partialLinkText("Inbox")).size()>0);
+
+            //Compose email
+        WebElement composeEmail = dr.findElement(By.id(":en"));
+        composeEmail.click();
+        WebElement emailAddress = By.name("to").findElement(dr);
+
+        emailAddress.sendKeys("nazymhealthywater@gmail.com");
+
+        WebElement subjectLine = By.name("subjectbox").findElement(dr);
+        subjectLine.sendKeys("New message for you");
+
+        WebElement emailBody = By.xpath("//div[@aria-label='Message Body']").findElement(dr);
+        emailBody.sendKeys("Today is good time to code app");
+
+        WebElement sendButton = By.xpath("//div[starts-with(@aria-label,'Send')]").findElement(dr);
+
+        sendButton.click();
+
+
+
+
+
     }
+
+//    @After
+//    public  void closeBrowser(){
+//        // changes
+//
+//        dr.close();
+//    }
  }
