@@ -9,10 +9,11 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import static org.junit.Assert.*;
+import static org.openqa.selenium.By.cssSelector;
 
-/**
- * Created by shamal on 8/28/2016.
- */
+
+  //Created by shamal on 8/28/2016.
+
 public class GmailSignInTest{
     WebDriver dr = new FirefoxDriver();
     WebDriverWait wd = new WebDriverWait(dr, 30);
@@ -22,6 +23,7 @@ public class GmailSignInTest{
     public void gmailLoginShouldBeSuccessful(){
 
 // SignIn
+        // vcs 3
         dr.get("http://gmail.com/");
         System.out.println(dr.getTitle());
         dr.findElement(By.xpath("//input[@id='Email']")).sendKeys("nazymhealthywater");
@@ -39,7 +41,7 @@ public class GmailSignInTest{
         // SIGNOUT
 
         //Actions ms = new Actions(dr);
-        WebElement profileButton = dr.findElement(By.xpath("//span[@class='gb_3a gbii']"));
+        WebElement profileButton = dr.findElement(By.xpath("//span[@class='gb_7a gbii']"));
         profileButton.click();
 
         WebElement signOutLinkage = dr.findElement(By.id("gb_71"));
@@ -63,8 +65,10 @@ public class GmailSignInTest{
         Assert.assertTrue("Inbox should exist", dr.findElements(By.partialLinkText("Inbox")).size()>0);
 
             //Compose email
-        WebElement composeEmail = dr.findElement(By.id(":en"));
+        WebElement composeEmail = dr.findElement(By.xpath(".//*[@class='aic']/div/div"));
         composeEmail.click();
+
+
         WebElement emailAddress = By.name("to").findElement(dr);
 
         emailAddress.sendKeys("nazymhealthywater@gmail.com");
@@ -75,7 +79,8 @@ public class GmailSignInTest{
 
         String bodyMessage = "Today is good time to code app";
         WebElement emailBody = By.xpath("//div[@aria-label='Message Body']").findElement(dr);
-        emailBody.sendKeys(emailBody);
+        emailBody.sendKeys(bodyMessage);
+
 
         WebElement sendButton = By.xpath("//div[starts-with(@aria-label,'Send')]").findElement(dr);
         sendButton.click();
@@ -84,23 +89,38 @@ public class GmailSignInTest{
         WebElement inboxLinkage = By.linkText("Inbox (1)").findElement(dr);
         inboxLinkage.click();
 
-        WebElement newEmail = By.cssSelector().findElement(dr);
+        wd.until(ExpectedConditions.elementToBeClickable(By.cssSelector("div[class='y6']>span[id]>b")));
+        WebElement newEmail = By.cssSelector("div[class='y6']>span[id]>b").findElement(dr);
         newEmail.click();
 
-        WebElement subjectArea = By.cssSelector().findElement(dr);
+        wd.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("h2[class='hP']")));
+        WebElement subjectArea = By.cssSelector("h2[class='hP']").findElement(dr);
         Assert.assertEquals("Email subject text should be the same", subject, subjectArea.getText());
 
-        WebElement bodyArea = By.cssSelector().findElement(dr);
-        Assert.assertEquals("Email subject text should be the same", emailBody, subjectArea.getText());
+        WebElement bodyArea = By.xpath("//div[@class='nH'][@role='list']/div/div/div/div/div/div[1]/div[2]/div[7]/div/div[1]").findElement(dr);
+        Assert.assertEquals("Email body text should be the same", bodyMessage, bodyArea.getText());
+
+
+        // SIGNOUT
+
+        //Actions ms = new Actions(dr);
+        wd.until(ExpectedConditions.elementToBeClickable(By.xpath("//span[@class='gb_7a gbii']")));
+        WebElement profileButton = dr.findElement(By.xpath("//span[@class='gb_7a gbii']"));
+        profileButton.click();
+
+        wd.until(ExpectedConditions.elementToBeClickable(By.id("gb_71")));
+        WebElement signOutLinkage = dr.findElement(By.id("gb_71"));
+        signOutLinkage.click();
+
 
 
 
     }
 
-//    @After
-//    public  void closeBrowser(){
-//        // changes
-//
-//        dr.close();
-//    }
- }
+    @After
+    public  void closeBrowser(){
+        // changes
+
+        dr.close();
+    }
+}
