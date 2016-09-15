@@ -1,4 +1,5 @@
 import com.appsenseca.pageobjects.EmailHomePage;
+import com.appsenseca.pageobjects.EmailViewPage;
 import com.appsenseca.util.WebUtil;
 import com.appsenseca.pageobjects.SignInPage;
 import org.junit.After;
@@ -43,69 +44,49 @@ public class GmailSignInTest{
     }
     @Test
     public void gmailSendAndReseiveEmailTest(){
-        dr.get("http://gmail.com/");
-        System.out.println(dr.getTitle());
-        dr.findElement(By.xpath("//input[@id='Email']")).sendKeys("nazymhealthywater");
-        dr.findElement(By.id("next")).click();
+        SignInPage signInPage = WebUtil.goToSignInPage(dr, wd);
 
+        signInPage.fillInUsername(dr,wd, "nazymhealthywater");
 
-        wd.until(ExpectedConditions.elementToBeClickable(By.id("Passwd")));
-        // Thread.sleep(1000);
-        dr.findElement(By.id("Passwd")).sendKeys("Arlen@470317");
-        dr.findElement(By.id("signIn")).click();
-        wd.until(ExpectedConditions.visibilityOfElementLocated(By.partialLinkText("Inbox")));
-        Assert.assertTrue("Inbox should exist", dr.findElements(By.partialLinkText("Inbox")).size()>0);
+        signInPage.fillInPassword(dr, wd, "Arlen@470317");
 
-            //Compose email
-        WebElement composeEmail = dr.findElement(By.xpath(".//*[@class='aic']/div/div"));
-        composeEmail.click();
+        EmailHomePage emailHomePage = signInPage.clickSignIn(dr, wd);
 
+        Assert.assertTrue("Inbox should exist", emailHomePage.isInboxExist(dr, wd));
 
-        WebElement emailAddress = By.name("to").findElement(dr);
+            //COMPOSE EMAIL
+        emailHomePage.clickComposeButton(dr, wd);
 
-        emailAddress.sendKeys("nazymhealthywater@gmail.com");
+        String recipient = "nazymhealthywater@gmail.com";
+        emailHomePage.fillInRecipient(dr, wd, recipient);
+
         String subject = "New message for you";
+        emailHomePage.fillInSubjectLine(dr, wd, subject);
 
-        WebElement subjectLine = By.name("subjectbox").findElement(dr);
-        subjectLine.sendKeys(subject);
 
         String bodyMessage = "Today is good time to code app";
-        WebElement emailBody = By.xpath("//div[@aria-label='Message Body']").findElement(dr);
-        emailBody.sendKeys(bodyMessage);
+        emailHomePage.fillInEmailBody(dr,wd,bodyMessage);
 
 
-        WebElement sendButton = By.xpath("//div[starts-with(@aria-label,'Send')]").findElement(dr);
-        sendButton.click();
+        emailHomePage.clickSendEmail(dr);
 
-        wd.until(ExpectedConditions.visibilityOfElementLocated(By.linkText("Inbox (1)")));
-        WebElement inboxLinkage = By.linkText("Inbox (1)").findElement(dr);
-        inboxLinkage.click();
+        emailHomePage.clickInboxWithNewEmail(dr,wd);
 
-        wd.until(ExpectedConditions.elementToBeClickable(By.cssSelector("div[class='y6']>span[id]>b")));
-        WebElement newEmail = By.cssSelector("div[class='y6']>span[id]>b").findElement(dr);
-        newEmail.click();
+        EmailViewPage emailViewPage = emailHomePage.clickNewEmail(dr,wd);
 
-        wd.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("h2[class='hP']")));
-        WebElement subjectArea = By.cssSelector("h2[class='hP']").findElement(dr);
-        Assert.assertEquals("Email subject text should be the same", subject, subjectArea.getText());
+        emailViewPage.getEmailSubjectText(dr, wd);
 
-        WebElement bodyArea = By.xpath("//div[@class='nH'][@role='list']/div/div/div/div/div/div[1]/div[2]/div[7]/div/div[1]").findElement(dr);
-        Assert.assertEquals("Email body text should be the same", bodyMessage, bodyArea.getText());
+        Assert.assertEquals("Email subject text should be the same", subject, emailViewPage.getEmailSubjectText(dr,wd));
+
+        emailViewPage.getEmailBodyText(dr);
+
+        Assert.assertEquals("Email body text should be the same", bodyMessage, emailViewPage.getEmailBodyText(dr));
 
 
         // SIGNOUT
 
         //Actions ms = new Actions(dr);
-        wd.until(ExpectedConditions.elementToBeClickable(By.xpath("//span[@class='gb_7a gbii']")));
-        WebElement profileButton = dr.findElement(By.xpath("//span[@class='gb_7a gbii']"));
-        profileButton.click();
-
-        wd.until(ExpectedConditions.elementToBeClickable(By.id("gb_71")));
-        WebElement signOutLinkage = dr.findElement(By.id("gb_71"));
-        signOutLinkage.click();
-
-
-
+        emailHomePage.signOut(dr,wd);
 
     }
 
