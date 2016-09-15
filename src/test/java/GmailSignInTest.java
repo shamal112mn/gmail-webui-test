@@ -23,7 +23,7 @@ public class GmailSignInTest{
     public void gmailLoginShouldBeSuccessful(){
 
 // SignIn
-        // vcs 7
+        // vcs 8
         dr.get("http://gmail.com/");
         System.out.println(dr.getTitle());
         dr.findElement(By.xpath("//input[@id='Email']")).sendKeys("nazymhealthywater");
