@@ -1,3 +1,6 @@
+import com.appsenseca.pageobjects.EmailHomePage;
+import com.appsenseca.util.WebUtil;
+import com.appsenseca.pageobjects.SignInPage;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Test;
@@ -8,11 +11,8 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import static org.junit.Assert.*;
-import static org.openqa.selenium.By.cssSelector;
 
-
-  //Created by shamal on 8/28/2016.
+//Created by shamal on 8/28/2016.
 
 public class GmailSignInTest{
     WebDriver dr = new FirefoxDriver();
@@ -24,30 +24,22 @@ public class GmailSignInTest{
 
 // SignIn
         // vcs 8
-        dr.get("http://gmail.com/");
-        System.out.println(dr.getTitle());
-        dr.findElement(By.xpath("//input[@id='Email']")).sendKeys("nazymhealthywater");
-        dr.findElement(By.id("next")).click();
+        SignInPage signInPage = WebUtil.goToSignInPage(dr, wd);
 
+        signInPage.fillInUsername(dr,wd, "nazymhealthywater");
 
-        wd.until(ExpectedConditions.elementToBeClickable(By.id("Passwd")));
-        // Thread.sleep(1000);
-        dr.findElement(By.id("Passwd")).sendKeys("Arlen@470317");
-        dr.findElement(By.id("signIn")).click();
-        wd.until(ExpectedConditions.visibilityOfElementLocated(By.partialLinkText("Inbox")));
-        Assert.assertTrue("Inbox should exist", dr.findElements(By.partialLinkText("Inbox")).size()>0);
+        signInPage.fillInPassword(dr, wd, "Arlen@470317");
+
+       EmailHomePage emailHomePage = signInPage.clickSignIn(dr, wd);
+
+        Assert.assertTrue("Inbox should exist", emailHomePage.isInboxExist(dr, wd));
 
 
         // SIGNOUT
 
-        //Actions ms = new Actions(dr);
-        WebElement profileButton = dr.findElement(By.xpath("//span[@class='gb_7a gbii']"));
-        profileButton.click();
+        signInPage  = emailHomePage.signOut(dr, wd);
 
-        WebElement signOutLinkage = dr.findElement(By.id("gb_71"));
-        signOutLinkage.click();
-        wd.until(ExpectedConditions.visibilityOfElementLocated(By.id("signIn")));
-        Assert.assertTrue("signIn button should exist", dr.findElements(By.id("signIn")).size()>0);
+        Assert.assertTrue("signIn button should exist",signInPage.isSignInButtonExist(dr, wd));
     }
     @Test
     public void gmailSendAndReseiveEmailTest(){
